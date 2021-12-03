@@ -821,11 +821,16 @@ By default the input-method will not handle DEL, so we need this command."
     (while (not commit)
       (let ((keyseq (read-event)))
 
-	(when (integerp keyseq)
-	  (setq commit (rime-input--method keyseq))
+	(when (and (integerp keyseq)
+		   ) 
+	  ;; (setq commit (rime-input--method keyseq))
+	  (rime-input--method keyseq)
+          (setq commit (rime-lib-get-commit))
           (unless (sequencep commit)
-	    (setq commit nil))
+	    (setq commit nil)
+	    )
 	  (message "commit: %s" commit)
+	  (message "event-modifiers: %s" (event-modifiers keyseq))
           
 	  (message "keyseq: %s" keyseq)))
       
@@ -865,14 +870,15 @@ By default the input-method will not handle DEL, so we need this command."
                    ;; (preedit (thread-last context
                    ;;            (alist-get 'composition)
                    ;;            (alist-get 'preedit)))
-                   (commit (rime-lib-get-commit)))
+                   ;; (commit (rime-lib-get-commit))
+		   )
               (unwind-protect
                   (cond
                    ((not handled)
                     (list key))
-                   (commit
-                    (rime--clear-overlay)
-                    (mapcar 'identity commit))
+                   ;; (commit
+                   ;;  ;; (rime--clear-overlay)
+                   ;;  (mapcar 'identity commit))
                    (t
                     (when should-inline-ascii
                       (if (and (not (rime--ascii-mode-p))
