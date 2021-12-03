@@ -821,18 +821,22 @@ By default the input-method will not handle DEL, so we need this command."
     (while (not commit)
       (let ((keyseq (read-event)))
 
-	(when (and (integerp keyseq)
-		   ) 
+	;; (when (and (integerp keyseq)) 
 	  ;; (setq commit (rime-input--method keyseq))
+
+	(when (event-modifiers keyseq)
+	  (call-interactively 'rime-send-keybinding))
 	  (rime-input--method keyseq)
           (setq commit (rime-lib-get-commit))
-          (unless (sequencep commit)
-	    (setq commit nil)
-	    )
+          ;; (unless (sequencep commit)
+	  ;;   (setq commit nil)
+	  ;;   )
 	  (message "commit: %s" commit)
 	  (message "event-modifiers: %s" (event-modifiers keyseq))
           
-	  (message "keyseq: %s" keyseq)))
+	  (message "keyseq: %s" keyseq)
+	  ;; )
+	)
       
       )
     (message "jj")
