@@ -811,6 +811,27 @@ By default the input-method will not handle DEL, so we need this command."
                 (get-char-property (point) 'inhibit-read-only)))))
 
 (defun rime-input-method (key)
+  
+  (let* ((echo-keystrokes 0)
+	 (input-method-function nil)
+	 commit
+	 overriding-terminal-local-map)
+    (rime-input--method key)
+    (message "here")
+    (while (not commit)
+      (let ((keyseq (read-char-exclusive)))
+
+	(setq commit (rime-input--method keyseq))
+	(message "keyseq: %s" keyseq)
+        
+	))
+    (message "jj")
+    (rime--clear-overlay)
+    (mapcar 'identity commit)
+    
+    ))
+
+(defun rime-input--method (key)
   "Process KEY with input method."
   (setq rime--current-input-key key)
   (when (rime--rime-lib-module-ready-p)
