@@ -819,12 +819,17 @@ By default the input-method will not handle DEL, so we need this command."
     (rime-input--method key)
     (message "here")
     (while (not commit)
-      (let ((keyseq (read-char-exclusive)))
+      (let ((keyseq (read-event)))
 
-	(setq commit (rime-input--method keyseq))
-	(message "keyseq: %s" keyseq)
-        
-	))
+	(when (integerp keyseq)
+	  (setq commit (rime-input--method keyseq))
+          (unless (sequencep commit)
+	    (setq commit nil))
+	  (message "commit: %s" commit)
+          
+	  (message "keyseq: %s" keyseq)))
+      
+      )
     (message "jj")
     (rime--clear-overlay)
     (mapcar 'identity commit)
