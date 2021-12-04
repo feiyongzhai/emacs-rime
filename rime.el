@@ -811,12 +811,13 @@ By default the input-method will not handle DEL, so we need this command."
                 (get-char-property (point) 'inhibit-read-only)))))
 
 (defun rime-input-method (key)
-  
+  "我自己胡的一个版本"
   (let* ((echo-keystrokes 0)
 	 (input-method-function nil)
 	 commit
 	 overriding-terminal-local-map)
     (rime-input--method key)
+    (setq commit (rime-lib-get-commit))
     (message "here")
     (while (not commit)
       (let ((keyseq (read-event)))
