@@ -810,16 +810,22 @@ By default the input-method will not handle DEL, so we need this command."
        (not (or inhibit-read-only
                 (get-char-property (point) 'inhibit-read-only)))))
 
+(defvar rime-process-translating t)
+(defvar rime-can-not-process nil)
 (defun rime-input-method (key)
   "我自己胡的一个版本"
   (let* ((echo-keystrokes 0)
 	 (input-method-function nil)
 	 commit
 	 overriding-terminal-local-map)
+    ;; 信号变量初始化
+    (setq rime-process-translating t)
+    (setq rime-can-not-process nil)
+
     (rime-input--method key)
     (setq commit (rime-lib-get-commit))
     ;; (message "here")
-    (while (not commit)
+    (while rime-process-translating
       (let ((keyseq (read-event)))
 
 	;; (when (and (integerp keyseq)) 
@@ -836,7 +842,9 @@ By default the input-method will not handle DEL, so we need this command."
 	    (let ((cmd (lookup-key rime-active-mode-map (vector keyseq))))
 	      (call-interactively cmd))
 	  (rime-input--method keyseq)
-          (setq commit (rime-lib-get-commit)))
+          (setq commit (rime-lib-get-commit))
+	  (when commit
+	    (setq rime-process-translating nil)))
           ;; (unless (sequencep commit)
 	  ;;   (setq commit nil)
 	  ;;   )
@@ -850,7 +858,9 @@ By default the input-method will not handle DEL, so we need this command."
       )
     ;; (message "jj")
     (rime--clear-overlay)
-    (mapcar 'identity commit)
+    (if rime-can-not-process
+	(list key)
+	(mapcar 'identity commit))
     
     ))
 
@@ -867,7 +877,10 @@ By default the input-method will not handle DEL, so we need this command."
                      overriding-local-map))
             (and (not (rime--should-enable-p))
                  (not (rime--has-composition (rime-lib-get-context)))))
-        (list key)
+        (progn
+	  (setq rime-process-translating nil)
+	  (setq rime-can-not-process t)
+	  (list key))
       (let ((should-inline-ascii (rime--should-inline-ascii-p))
             (inline-ascii-prefix nil))
         (when (and should-inline-ascii rime-inline-ascii-holder
@@ -888,7 +901,10 @@ By default the input-method will not handle DEL, so we need this command."
               (unwind-protect
                   (cond
                    ((not handled)
-                    (list key))
+		    (setq rime-process-translating nil)
+		    (setq rime-can-not-process t)
+                    (list key)
+		    )
                    ;; (commit
                    ;;  ;; (rime--clear-overlay)
                    ;;  (mapcar 'identity commit))
