@@ -825,10 +825,14 @@ By default the input-method will not handle DEL, so we need this command."
 	;; (when (and (integerp keyseq)) 
 	  ;; (setq commit (rime-input--method keyseq))
 
-	(when (event-modifiers keyseq)
-	  (call-interactively 'rime-send-keybinding))
+	;; (when (event-modifiers keyseq)
+	;;   (call-interactively 'rime-send-keybinding))
+	(if (and rime-active-mode
+		 (event-modifiers keyseq))
+	    (let ((cmd (lookup-key rime-active-mode-map (vector keyseq))))
+	      (call-interactively cmd))
 	  (rime-input--method keyseq)
-          (setq commit (rime-lib-get-commit))
+          (setq commit (rime-lib-get-commit)))
           ;; (unless (sequencep commit)
 	  ;;   (setq commit nil)
 	  ;;   )
