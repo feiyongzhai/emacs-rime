@@ -825,7 +825,8 @@ By default the input-method will not handle DEL, so we need this command."
     (rime-input--method key)
     (setq commit (rime-lib-get-commit))
     ;; (message "here")
-    (while rime-process-translating
+    (while (and rime-process-translating
+		(not commit))
       (let ((keyseq (read-event)))
 
 	;; (when (and (integerp keyseq)) 
