@@ -818,7 +818,7 @@ By default the input-method will not handle DEL, so we need this command."
 	 overriding-terminal-local-map)
     (rime-input--method key)
     (setq commit (rime-lib-get-commit))
-    (message "here")
+    ;; (message "here")
     (while (not commit)
       (let ((keyseq (read-event)))
 
@@ -836,15 +836,15 @@ By default the input-method will not handle DEL, so we need this command."
           ;; (unless (sequencep commit)
 	  ;;   (setq commit nil)
 	  ;;   )
-	  (message "commit: %s" commit)
-	  (message "event-modifiers: %s" (event-modifiers keyseq))
+	  ;; (message "commit: %s" commit)
+	  ;; (message "event-modifiers: %s" (event-modifiers keyseq))
           
-	  (message "keyseq: %s" keyseq)
+	  ;; (message "keyseq: %s" keyseq)
 	  ;; )
 	)
       
       )
-    (message "jj")
+    ;; (message "jj")
     (rime--clear-overlay)
     (mapcar 'identity commit)
     
