@@ -767,7 +767,8 @@ By default the input-method will not handle DEL, so we need this command."
       (when (rime--has-composition context)
         (rime-lib-clear-composition)
         (rime--redisplay)))
-    (rime--refresh-mode-state)))
+    (rime--refresh-mode-state)
+    (setq rime-process-translating nil)))
 
 (defun rime--return ()
   "Commit the raw input."
