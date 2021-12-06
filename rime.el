@@ -961,7 +961,8 @@ By default the input-method will not handle DEL, so we need this command."
   (rime-lib-clear-composition)
   (rime--display-preedit)
   (rime--show-candidate)
-  (rime--refresh-mode-state))
+  (rime--refresh-mode-state)
+  (setq rime-process-translating nil))
 
 (defun rime--clear-state-before-unrelated-command ()
   "Clear state if this command is unrelated to rime."
@@ -978,7 +979,8 @@ By default the input-method will not handle DEL, so we need this command."
     (when rime--temporarily-ignore-predicates
       (setq rime--temporarily-ignore-predicates nil)
       (run-hooks 'rime-force-enable-exit-hook))
-    (rime-active-mode -1)))
+    (rime-active-mode -1)
+    (setq rime-process-translating nil)))
 
 (defun rime-select-schema ()
   "Select Rime schema."
