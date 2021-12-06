@@ -826,24 +826,18 @@ By default the input-method will not handle DEL, so we need this command."
 
     (rime-input--method key)
     (setq commit (rime-lib-get-commit))
-    ;; (message "here")
+    ;; (message "start read-event loop")
     (while (and rime-process-translating
 		(not commit))
       (let ((inhibit-quit t))
 	(let ((keyseq (read-event)))
 
-	  ;; (when (and (integerp keyseq)) 
-	  ;; (setq commit (rime-input--method keyseq))
-
-	  ;; (when (event-modifiers keyseq)
-	  ;;   (call-interactively 'rime-send-keybinding))
 	  (if (or (and rime-active-mode
 		       (event-modifiers keyseq)
 		       (not (member 'shift (event-modifiers keyseq))))
 		  (eq 'backspace keyseq)
 		  (eq 'return keyseq)
-		  (eq 'escape keyseq)
-		  )
+		  (eq 'escape keyseq))
 	      (let ((cmd (lookup-key rime-active-mode-map (vector keyseq))))
 		(if (commandp cmd)
 		    (call-interactively cmd)
@@ -854,25 +848,18 @@ By default the input-method will not handle DEL, so we need this command."
             (setq commit (rime-lib-get-commit))
 	    (when commit
 	      (setq rime-process-translating nil)))
-          ;; (unless (sequencep commit)
-	  ;;   (setq commit nil)
-	  ;;   )
 	  ;; (message "commit: %s" commit)
 	  ;; (message "event-modifiers: %s" (event-modifiers keyseq))
-          
 	  ;; (message "keyseq: %s" keyseq)
-	  ;; )
 	  )
 	(if inhibit-quit (setq quit-flag nil))
 	)
-      
       )
-    ;; (message "jj")
+    ;; (message "end read-event loop")
     (rime--clear-overlay)
     (if rime-can-not-process
 	(list key)
-	(mapcar 'identity commit))
-    
+      (mapcar 'identity commit))
     ))
 
 (defun rime-input--method (key)
