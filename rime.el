@@ -829,25 +829,30 @@ By default the input-method will not handle DEL, so we need this command."
     ;; (message "here")
     (while (and rime-process-translating
 		(not commit))
-      (let ((keyseq (read-event)))
+      (let ((inhibit-quit t))
+	(let ((keyseq (read-event)))
 
-	;; (when (and (integerp keyseq)) 
+	  ;; (when (and (integerp keyseq)) 
 	  ;; (setq commit (rime-input--method keyseq))
 
-	;; (when (event-modifiers keyseq)
-	;;   (call-interactively 'rime-send-keybinding))
-	(if (or (and rime-active-mode
-		     (event-modifiers keyseq))
-		(eq 'backspace keyseq)
-		(eq 'return keyseq)
-		(eq 'escape keyseq)
-		)
-	    (let ((cmd (lookup-key rime-active-mode-map (vector keyseq))))
-	      (call-interactively cmd))
-	  (rime-input--method keyseq)
-          (setq commit (rime-lib-get-commit))
-	  (when commit
-	    (setq rime-process-translating nil)))
+	  ;; (when (event-modifiers keyseq)
+	  ;;   (call-interactively 'rime-send-keybinding))
+	  (if (or (and rime-active-mode
+		       (event-modifiers keyseq))
+		  (eq 'backspace keyseq)
+		  (eq 'return keyseq)
+		  (eq 'escape keyseq)
+		  )
+	      (let ((cmd (lookup-key rime-active-mode-map (vector keyseq))))
+		(if (commandp cmd)
+		    (call-interactively cmd)
+		  (setq rime-process-translating nil)
+		  (setq rime-can-not-process t)
+		  (setq key keyseq)))
+	    (rime-input--method keyseq)
+            (setq commit (rime-lib-get-commit))
+	    (when commit
+	      (setq rime-process-translating nil)))
           ;; (unless (sequencep commit)
 	  ;;   (setq commit nil)
 	  ;;   )
@@ -856,6 +861,8 @@ By default the input-method will not handle DEL, so we need this command."
           
 	  ;; (message "keyseq: %s" keyseq)
 	  ;; )
+	  )
+	(if inhibit-quit (setq quit-flag nil))
 	)
       
       )
