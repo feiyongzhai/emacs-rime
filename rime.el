@@ -824,7 +824,7 @@ By default the input-method will not handle DEL, so we need this command."
     (setq rime-process-translating t)
     (setq rime-can-not-process nil)
 
-    (rime-input--method key)
+    (rime--input-method key)
     (setq commit (rime-lib-get-commit))
     ;; (message "start read-event loop")
     (while (and rime-process-translating
@@ -844,7 +844,7 @@ By default the input-method will not handle DEL, so we need this command."
 		  (setq rime-process-translating nil)
 		  (setq rime-can-not-process t)
 		  (setq key keyseq)))
-	    (rime-input--method keyseq)
+	    (rime--input-method keyseq)
             (setq commit (rime-lib-get-commit))
 	    (when commit
 	      (setq rime-process-translating nil)))
@@ -862,7 +862,7 @@ By default the input-method will not handle DEL, so we need this command."
       (mapcar 'identity commit))
     ))
 
-(defun rime-input--method (key)
+(defun rime--input-method (key)
   "Process KEY with input method."
   (setq rime--current-input-key key)
   (when (rime--rime-lib-module-ready-p)
