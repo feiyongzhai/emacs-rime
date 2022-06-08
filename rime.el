@@ -929,6 +929,7 @@ By default the input-method will not handle DEL, so we need this command."
                                    (equal (cadr s) schema-name)))
                        (car))))
         (message "Rime schema: %s" schema-name)
+	(setq rime-cycle-zhengma-luna schema)
         (rime-lib-select-schema schema))
     (message "Rime is not activated.")))
 
